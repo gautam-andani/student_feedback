@@ -30,6 +30,8 @@ def do_admin_login():
     
     session['logged_in'] = True
     if role == 'hod':
+        return hoddashboard()
+    elif role == 'admin':
         return root()
     elif role == 'teacher':
         return teacherdashboard(username[7:])
