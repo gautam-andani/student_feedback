@@ -9,9 +9,12 @@ from analytics import write_to_csv_departments, write_to_csv_teachers
 from analytics import get_counts, get_tables, get_titles
 from teacherdashboard import get_feedback_counts
 from access_user import verify
+import excel_fill
 
 app = Flask(__name__)
 app.secret_key = os.urandom(12) # for session creation and management security
+UPLOAD_FOLDER = 'uploads'  # folder to store uploaded files
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/')
@@ -27,7 +30,7 @@ def do_admin_login():
     role = verify(username=username, password=password)
     if not role:
         return redirect(url_for('login'))
-    
+    session['username'] = username
     session['logged_in'] = True
     if role == 'hod':
         return hoddashboard()
@@ -37,36 +40,6 @@ def do_admin_login():
         return teacherdashboard(username[7:])
     else:
         return render_template('index.html', name = username)
-    
-    # if request.form['password'] == 'admin' and request.form['username'] == 'admin':
-    #     session['logged_in'] = True
-    #     return root()
-    # elif request.form['password'] == 'hod' and request.form['username'] == 'hod':
-    #     session['logged_in'] = True
-    #     return hoddashboard()
-    # elif request.form['password'] == 'teacher1' and request.form['username'] == 'teacher1':
-    #     session['logged_in'] = True
-    #     return teacherdashboard(1)
-    # elif request.form['password'] == 'teacher2' and request.form['username'] == 'teacher2':
-    #     session['logged_in'] = True
-    #     return teacherdashboard(2)
-    # elif request.form['password'] == 'teacher3' and request.form['username'] == 'teacher3':
-    #     session['logged_in'] = True
-    #     return teacherdashboard(3)
-    # elif request.form['password'] == 'teacher4' and request.form['username'] == 'teacher4':
-    #     session['logged_in'] = True
-    #     return teacherdashboard(4)
-    # elif request.form['password'] == 'teacher5' and request.form['username'] == 'teacher5':
-    #     session['logged_in'] = True
-    #     return teacherdashboard(5)
-    # elif request.form['password'] == 'teacher6' and request.form['username'] == 'teacher6':
-    #     session['logged_in'] = True
-    #     return teacherdashboard(6)
-    # elif request.form['password'] == 'student@123' and request.form['username'] == 'EN20IT301014':
-    #     session['logged_in'] = True
-    #     # return studentdashboard(1)
-    # else:
-    #     return render_template('loginerror.html')
 
 
 def teacherdashboard(teachernumber):
@@ -123,6 +96,8 @@ def logout():
 def predict():
     if not session.get('logged_in'):
         return render_template('login.html')
+    
+    username = session.get('username')
 
     teaching = request.form['teaching']
     courseContent = request.form['coursecontent']
@@ -156,7 +131,7 @@ def predict():
 
     write_to_csv_departments(time, teachingscore[0], teaching, courseContentscore[0], courseContent,
                              examinationscore[0], examination, labWorkscore[0], labWork, libraryFacilitiesscore[0],
-                             libraryFacilities, extraCurricularscore[0], extraCurricular)
+                             libraryFacilities, extraCurricularscore[0], extraCurricular, username)
 
     write_to_csv_teachers(teacher1, teacher1score[0], teacher2, teacher2score[0], teacher3, teacher3score[0],
                           teacher4, teacher4score[0], teacher5, teacher5score[0], teacher6, teacher6score[0])
@@ -184,6 +159,38 @@ def root():
                                tlwneu=tlwneu, tlfp=tlfp, tlfn=tlfn, tlfneu=tlfneu, tecp=tecp, tecn=tecn, tecneu=tecneu
                                )
 
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    # Check if the 'file' key is in the request.files dictionary
+    if 'file' not in request.files:
+        return 'No file selected'
+
+    uploaded_file = request.files['file']
+
+    # Check if the file has a filename
+    if uploaded_file.filename == '':
+        return 'No file selected'
+
+    try:
+        # Save the uploaded file to the designated folder
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
+        uploaded_file.save(file_path)
+
+        # Call the enter_through_excel function with the correct path
+        successful, errors = excel_fill.enter_through_excel(path=file_path)
+
+        # Provide a response with information about successful queries and errors
+        response_data = {
+            'message': 'File uploaded and processed successfully',
+            'successful_queries': successful,
+            'errors': errors
+        }
+
+        return jsonify(response_data)
+    except Exception as e:
+        # Handle any errors and provide an appropriate response
+        response_data = {'error': f'Error: {str(e)}'}
+        return jsonify(response_data)
 
 @app.route("/hoddashboard")
 def hoddashboard():
@@ -220,52 +227,3 @@ def display():
 
 
 app.run(port=5978, host='0.0.0.0', debug=True)
-
-# __________________________________________________________________________
-
-
-# app = Flask(__name__)
-# # Change this to a secure random value in production
-# app.secret_key = 'your_secret_key'
-
-# # Sample user data (you should use a database in a real application)
-# users = {
-#     'username': 'password',  # Replace with actual username and hashed passwords
-# }
-
-
-# @app.route('/')
-# def login():
-#     if 'username' in session:
-#         return redirect(url_for('dashboard'))
-#     return render_template('login.html')
-
-
-# @app.route('/studentlogin', methods=['POST'])
-# def do_login():
-#     # username = request.form['username']
-#     # password = request.form['password']
-
-#     # if users.get(username) == password:
-#     #     session['username'] = username
-#     #     return redirect(url_for('dashboard'))
-#     # else:
-#     #     return "Invalid username or password. <a href='/'>Try again</a>"
-#     return render_template('studentlogin.html')
-
-
-# @app.route('/dashboard')
-# def dashboard():
-#     if 'username' in session:
-#         return render_template('dashboard.html', username=session['username'])
-#     return redirect(url_for('login'))
-
-
-# @app.route('/logout')
-# def logout():
-#     session.pop('username', None)
-#     return redirect(url_for('login'))
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)

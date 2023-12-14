@@ -209,7 +209,11 @@
 
   <main id="main">
 
-
+    <h2>Input users through Excel File</h2>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".xlsx, .xls">
+      <input type="submit" value="Upload">
+  </form>
 
     <!-- ======= Department Dashboard Section ======= -->
     <section id="about" class="about">

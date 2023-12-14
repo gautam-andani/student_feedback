@@ -6,7 +6,7 @@ import numpy as np
 
 def write_to_csv_departments(time,teachingscore,teaching,courseContentscore,courseContent,
                  examinationscore,examination,labWorkscore,labWork,libraryFacilitiesscore,
-                 libraryFacilities,extraCurricularscore,extraCurricular):
+                 libraryFacilities,extraCurricularscore,extraCurricular,username):
 
     with open('dataset/database.csv', 'r') as f:
         reader = csv.reader(f)
@@ -19,7 +19,7 @@ def write_to_csv_departments(time,teachingscore,teaching,courseContentscore,cour
                 'examinationscore': examinationscore, 'examination': examination,
                 'labworkscore': labWorkscore, 'labwork': labWork,'libraryfacilitiesscore': libraryFacilitiesscore,
                 'libraryfacilities': libraryFacilities, 'extracurricularscore': extraCurricularscore,
-                'extracurricular': extraCurricular, 'Email Address': ''}
+                'extracurricular': extraCurricular, 'username': username}
         writer.writerow(dict)
 
 
