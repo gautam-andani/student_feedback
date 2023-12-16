@@ -38,4 +38,4 @@ def enter_through_excel(path):
     conn.close()
     return successful,error
 
-# enter_through_excel('uploads/Book1.xlsx')
+enter_through_excel('uploads/Book1.xlsx')
