@@ -66,20 +66,28 @@ def teacherdashboard(teachernumber):
     tecp = int(round(tecp / ttf * 100))
     tecn = int(round(tecn/ttf * 100))
     tecneu = int(round(tecneu/ttf * 100))
-
+    
+    data = [ttp, ttn, ttneu, tcp, tcn, tcneu, tep, ten, teneu, tlwp, tlwn, tlwneu,  tlfp, tlfn, tlfneu, tecp, tecn, tecneu]
+    role = f'teacher{teachernumber}'
+    
     if teachernumber == 1:
-        return render_template('teacherdashboard.html', ttf=ttf, ttp=ttp, ttn=ttn, ttneu=ttneu)
+        ttp, ttn, ttneu = data[0:3]
+        return render_template('teacherdashboard.html', role=role, ttf=ttf, ttp=ttp, ttn=ttn, ttneu=ttneu)
     elif teachernumber == 2:
-        return render_template('teacherdashboard.html', ttf=ttf, ttp=tcp, ttn=tcn, ttneu=tcneu)
+        ttp, ttn, ttneu = data[3:6]
+        return render_template('teacherdashboard.html', role=role, ttf=ttf, ttp=ttp, ttn=ttn, ttneu=ttneu)
     elif teachernumber == 3:
-        return render_template('teacherdashboard.html', ttf=ttf, ttp=tep, ttn=ten, ttneu=teneu)
+        ttp, ttn, ttneu = data[6:9]
+        return render_template('teacherdashboard.html', role=role, ttf=ttf, ttp=ttp, ttn=ttn, ttneu=ttneu)
     elif teachernumber == 4:
-        return render_template('teacherdashboard.html', ttf=ttf, ttp=tlwp, ttn=tlwn, ttneu=tlwneu)
+        ttp, ttn, ttneu = data[9:12]
+        return render_template('teacherdashboard.html', role=role, ttf=ttf, ttp=ttp, ttn=ttn, ttneu=ttneu)
     elif teachernumber == 5:
-        return render_template('teacherdashboard.html', ttf=ttf, ttp=tlfp, ttn=tlfn, ttneu=tlfneu)
+        ttp, ttn, ttneu = data[12:15]
+        return render_template('teacherdashboard.html', role=role, ttf=ttf, ttp=ttp, ttn=ttn, ttneu=ttneu)
     else:
-        return render_template('teacherdashboard.html', ttf=ttf, ttp=tecp, ttn=tecn, ttneu=tecneu)
-
+        ttp, ttn, ttneu = data[15:18]
+        return render_template('teacherdashboard.html', role=role, ttf=ttf, ttp=ttp, ttn=ttn, ttneu=ttneu)
 
 @app.route('/login', methods=['GET'])
 def login():
