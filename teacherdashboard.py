@@ -51,11 +51,8 @@ def get_feedback_counts():
           teacher5_positive_count,teacher5_negative_count,teacher5_neutral_count,
           teacher6_positive_count,teacher6_negative_count,teacher6_neutral_count]
 
-
     return no_of_feedbacks,\
            int(round(total_positive_feedbacks / total_feedbacks * 100)),\
            int(round(total_negative_feedbacks / total_feedbacks * 100)),\
            int(round(total_neutral_feedbacks / total_feedbacks * 100)),\
             li
-
-
